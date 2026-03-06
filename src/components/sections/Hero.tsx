@@ -177,7 +177,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={isLoaded ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-7xl  font-black tracking-tighter mb-6"
+            className="text-5xl sm:text-7xl  font-black tracking-tighter mb-6"
           >
             <motion.span
               initial={{ opacity: 0, x: -50 }}
