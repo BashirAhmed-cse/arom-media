@@ -1,4 +1,4 @@
-// components/sections/MenuPricing.tsx
+// components/sections/pricing/MenuPricing.tsx
 "use client"
 
 import { useState, useEffect } from "react"
@@ -25,12 +25,19 @@ import {
   Clock,
   Truck,
   Award,
-  Star
+  Star,
+  Shield,
+  RotateCcw,
+  TrendingUp
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-export default function MenuPricing() {
+interface MenuPricingProps {
+  onPriceChange?: (price: number) => void
+}
+
+export default function MenuPricing({ onPriceChange }: MenuPricingProps) {
   const [selectedMenuType, setSelectedMenuType] = useState("a5-double")
   const [selectedPaper, setSelectedPaper] = useState("premium-matt")
   const [selectedFinish, setSelectedFinish] = useState("standard")
@@ -38,19 +45,29 @@ export default function MenuPricing() {
   const [showComparison, setShowComparison] = useState(false)
   const [showSpecs, setShowSpecs] = useState(false)
   const [includeDesign, setIncludeDesign] = useState(false)
+  const [includeUV, setIncludeUV] = useState(false)
+  const [includeFolding, setIncludeFolding] = useState(false)
+  const [urgentOrder, setUrgentOrder] = useState(false)
 
-  // Menu Types
+  // Menu Types with detailed specifications
   const menuTypes = [
     {
       id: "a5-single",
       name: "A5 Single-sided",
-      size: "A5 (148 x 210mm)",
+      size: "148 x 210mm",
+      finished: "A5 (148 x 210mm)",
       description: "Perfect for daily specials, lunch menus, or drink lists",
       icon: Coffee,
       popular: false,
       basePrice: 45,
       pages: "1 side",
-      suitable: ["Cafés", "Coffee Shops", "Daily Specials"],
+      suitable: ["Cafés", "Coffee Shops", "Daily Specials", "Takeaway"],
+      specs: {
+        bleed: "3mm",
+        resolution: "300dpi",
+        format: "PDF/X-1a",
+        color: "CMYK"
+      },
       tiers: [
         { qty: 50, price: 45 },
         { qty: 100, price: 75 },
@@ -62,13 +79,20 @@ export default function MenuPricing() {
     {
       id: "a5-double",
       name: "A5 Double-sided",
-      size: "A5 (148 x 210mm)",
+      size: "148 x 210mm",
+      finished: "A5 (148 x 210mm)",
       description: "Ideal for full menus with multiple sections",
       icon: Utensils,
       popular: true,
       basePrice: 55,
       pages: "2 sides",
-      suitable: ["Restaurants", "Bistros", "Pubs"],
+      suitable: ["Restaurants", "Bistros", "Pubs", "Wine Bars"],
+      specs: {
+        bleed: "3mm",
+        resolution: "300dpi",
+        format: "PDF/X-1a",
+        color: "CMYK"
+      },
       tiers: [
         { qty: 50, price: 55 },
         { qty: 100, price: 95 },
@@ -80,13 +104,21 @@ export default function MenuPricing() {
     {
       id: "a4-folded",
       name: "A4 Folded (4 pages)",
-      size: "A4 folded to A5",
+      size: "297 x 210mm",
+      finished: "A4 folded to A5",
       description: "4-page menu - perfect for full restaurant menus",
       icon: Pizza,
       popular: false,
       basePrice: 75,
       pages: "4 pages",
-      suitable: ["Full Service", "Fine Dining", "Wine Lists"],
+      suitable: ["Full Service", "Fine Dining", "Wine Lists", "Cocktail Menus"],
+      specs: {
+        bleed: "3mm",
+        resolution: "300dpi",
+        format: "PDF/X-1a",
+        color: "CMYK",
+        folding: "Half fold"
+      },
       tiers: [
         { qty: 50, price: 75 },
         { qty: 100, price: 130 },
@@ -98,13 +130,21 @@ export default function MenuPricing() {
     {
       id: "a3-folded",
       name: "A3 Folded (8 pages)",
-      size: "A3 folded to A5",
+      size: "420 x 297mm",
+      finished: "A3 folded to A5",
       description: "8-page booklet - extensive menu options",
       icon: Wine,
       popular: false,
       basePrice: 120,
       pages: "8 pages",
-      suitable: ["Extensive Menus", "Wine Lists", "Cocktail Books"],
+      suitable: ["Extensive Menus", "Wine Lists", "Cocktail Books", "Seasonal Menus"],
+      specs: {
+        bleed: "3mm",
+        resolution: "300dpi",
+        format: "PDF/X-1a",
+        color: "CMYK",
+        folding: "Z-fold"
+      },
       tiers: [
         { qty: 50, price: 120 },
         { qty: 100, price: 200 },
@@ -116,13 +156,20 @@ export default function MenuPricing() {
     {
       id: "dl-flyer",
       name: "DL Flyer Menu",
-      size: "DL (99 x 210mm)",
+      size: "99 x 210mm",
+      finished: "DL (99 x 210mm)",
       description: "Slim format - great for takeaway menus",
       icon: Menu,
       popular: false,
       basePrice: 40,
       pages: "1 or 2 sides",
-      suitable: ["Takeaway", "Fast Food", "Price Lists"],
+      suitable: ["Takeaway", "Fast Food", "Price Lists", "Delivery Menus"],
+      specs: {
+        bleed: "3mm",
+        resolution: "300dpi",
+        format: "PDF/X-1a",
+        color: "CMYK"
+      },
       tiers: [
         { qty: 50, price: 40 },
         { qty: 100, price: 65 },
@@ -133,40 +180,52 @@ export default function MenuPricing() {
     },
   ]
 
-  // Paper Options
+  // Paper Options with detailed specifications
   const paperOptions = [
     {
       id: "standard-gloss",
       name: "Standard Gloss",
       description: "150gsm gloss - vibrant colours",
+      weight: "150gsm",
+      finish: "Gloss",
       multiplier: 1.0,
       color: "blue",
       suitable: "Cafés & Casual Dining",
+      features: ["Vibrant colours", "Quick drying", "Economical"],
     },
     {
       id: "premium-matt",
       name: "Premium Matt",
       description: "170gsm matt - elegant finish",
+      weight: "170gsm",
+      finish: "Matt",
       multiplier: 1.15,
       color: "purple",
       suitable: "Restaurants & Bistros",
       popular: true,
+      features: ["Non-reflective", "Easy to write on", "Premium feel"],
     },
     {
       id: "luxury-textured",
       name: "Luxury Textured",
       description: "250gsm textured - premium feel",
+      weight: "250gsm",
+      finish: "Textured",
       multiplier: 1.3,
       color: "amber",
       suitable: "Fine Dining",
+      features: ["Unique texture", "Heavyweight", "Luxury appearance"],
     },
     {
       id: "waterproof",
       name: "Waterproof",
       description: "Synthetic - spill resistant",
+      weight: "200gsm",
+      finish: "Waterproof",
       multiplier: 1.5,
       color: "green",
       suitable: "Outdoor & Bars",
+      features: ["Spill resistant", "Durable", "Weather proof"],
     },
   ]
 
@@ -177,24 +236,28 @@ export default function MenuPricing() {
       name: "Standard",
       description: "Cut & trimmed",
       price: 0,
+      icon: Printer,
     },
     {
       id: "rounded-corners",
       name: "Rounded Corners",
       description: "Soft touch finish",
       price: 15,
+      icon: RotateCcw,
     },
     {
       id: "lamination",
       name: "Matt Lamination",
       description: "Protective coating",
       price: 25,
+      icon: Shield,
     },
     {
       id: "spot-uv",
       name: "Spot UV",
       description: "High gloss accents",
       price: 35,
+      icon: Sparkles,
     },
   ]
 
@@ -211,14 +274,21 @@ export default function MenuPricing() {
 
   const designFee = includeDesign ? 95 : 0
   const finishingFee = currentFinish.price
-  const subtotal = getBasePrice() + designFee + finishingFee
+  const uvFee = includeUV ? 45 : 0
+  const foldingFee = includeFolding && selectedMenuType.includes("folded") ? 25 : 0
+  const urgentFee = urgentOrder ? Math.round(getBasePrice() * 0.25) : 0
+  
+  const subtotal = getBasePrice() + designFee + finishingFee + uvFee + foldingFee + urgentFee
   const unitPrice = subtotal / quantity
+  const vat = Math.round(subtotal * 0.2)
+  const total = subtotal + vat
 
   // Animate price changes
-  const [animatedPrice, setAnimatedPrice] = useState(subtotal)
+  const [animatedPrice, setAnimatedPrice] = useState(total)
   useEffect(() => {
-    setAnimatedPrice(subtotal)
-  }, [subtotal])
+    setAnimatedPrice(total)
+    onPriceChange?.(total)
+  }, [total, onPriceChange])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-GB", {
@@ -241,7 +311,7 @@ export default function MenuPricing() {
   return (
     <section className="bg-gradient-to-b from-white to-gray-50 py-16 md:py-24">
       <div className="container mx-auto px-4 sm:px-6">
-        {/* Header */}
+        {/* Header with Live Stats */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -250,6 +320,9 @@ export default function MenuPricing() {
           >
             <Menu className="h-4 w-4 text-orange-600" />
             <span className="text-sm font-medium text-orange-700">Restaurant Menu Printing</span>
+            <span className="bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full text-xs">
+              Live Pricing
+            </span>
           </motion.div>
 
           <motion.h2
@@ -258,7 +331,7 @@ export default function MenuPricing() {
             transition={{ delay: 0.1 }}
             className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
           >
-            Menu Design & Print
+            Menu Design & Print Calculator
           </motion.h2>
 
           <motion.p
@@ -267,23 +340,45 @@ export default function MenuPricing() {
             transition={{ delay: 0.2 }}
             className="text-gray-600"
           >
-            From café specials to fine dining - create the perfect menu for your establishment
+            From café specials to fine dining - instant pricing for your restaurant menus
           </motion.p>
+
+          {/* Live Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="flex justify-center gap-4 mt-6"
+          >
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <TrendingUp className="h-4 w-4 text-green-500" />
+              <span>500+ restaurants served</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Clock className="h-4 w-4 text-blue-500" />
+              <span>24-48hr turnaround</span>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Main Card */}
+        {/* Main Calculator Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden"
         >
-          {/* Menu Type Selector */}
+          {/* Menu Type Selector with Icons */}
           <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-6 border-b border-gray-200">
-            <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-              <Layers className="h-4 w-4 text-orange-600" />
-              Select Menu Format
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Layers className="h-4 w-4 text-orange-600" />
+                Select Menu Format
+              </h3>
+              <span className="text-xs text-gray-500">
+                {currentMenu.pages} • {currentMenu.size}
+              </span>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
               {menuTypes.map((menu) => {
                 const Icon = menu.icon
@@ -300,7 +395,8 @@ export default function MenuPricing() {
                     }`}
                   >
                     {menu.popular && (
-                      <span className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full">
+                      <span className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <Star className="h-3 w-3" />
                         Popular
                       </span>
                     )}
@@ -318,7 +414,7 @@ export default function MenuPricing() {
           {/* Main Content */}
           <div className="p-6 md:p-8">
             <div className="grid lg:grid-cols-12 gap-8">
-              {/* Left Column - Preview */}
+              {/* Left Column - Preview & Specs */}
               <div className="lg:col-span-4">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -330,17 +426,21 @@ export default function MenuPricing() {
                   >
                     {/* Menu Preview Card */}
                     <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 border border-gray-200">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-orange-100 rounded-lg">
-                          <Eye className="h-5 w-5 text-orange-600" />
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-orange-100 rounded-lg">
+                            <Eye className="h-5 w-5 text-orange-600" />
+                          </div>
+                          <h3 className="font-semibold text-gray-900">Menu Preview</h3>
                         </div>
-                        <h3 className="font-semibold text-gray-900">Menu Preview</h3>
+                        <span className="text-xs bg-gray-200 px-2 py-1 rounded-full">
+                          {currentMenu.id}
+                        </span>
                       </div>
                       
                       {/* Visual Menu Representation */}
                       <div className="flex justify-center mb-6">
                         <div className="relative">
-                          {/* Main menu representation */}
                           <div 
                             className="bg-gradient-to-br from-orange-100 to-amber-100 rounded-lg border-2 border-orange-300 shadow-lg overflow-hidden"
                             style={{
@@ -373,24 +473,44 @@ export default function MenuPricing() {
                         </div>
                       </div>
 
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Size:</span>
-                          <span className="font-medium text-gray-900">{currentMenu.size}</span>
+                      {/* Quick Specs */}
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <span className="text-gray-500 text-xs">Size:</span>
+                          <p className="font-medium text-gray-900">{currentMenu.size}</p>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Ideal for:</span>
-                          <span className="font-medium text-gray-900">{currentMenu.suitable[0]}</span>
+                        <div>
+                          <span className="text-gray-500 text-xs">Format:</span>
+                          <p className="font-medium text-gray-900">{currentMenu.pages}</p>
                         </div>
                       </div>
                     </div>
 
-                    {/* Suitable For Tags */}
+                    {/* Technical Specifications */}
                     <div className="bg-gray-50 rounded-xl p-4">
+                      <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <Info className="h-4 w-4 text-orange-600" />
+                        Technical Specs
+                      </h4>
+                      <div className="space-y-2">
+                        {Object.entries(currentMenu.specs).map(([key, value]) => (
+                          <div key={key} className="flex justify-between text-sm">
+                            <span className="text-gray-500 capitalize">{key}:</span>
+                            <span className="font-medium text-gray-900">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Suitable For Tags */}
+                    <div className="bg-white rounded-xl p-4 border border-gray-100">
                       <h4 className="text-sm font-semibold text-gray-900 mb-3">Perfect for:</h4>
                       <div className="flex flex-wrap gap-2">
                         {currentMenu.suitable.map((item) => (
-                          <span key={item} className="bg-white px-3 py-1.5 rounded-full text-xs text-gray-600 shadow-sm border border-gray-100">
+                          <span 
+                            key={item} 
+                            className="bg-orange-50 px-3 py-1.5 rounded-full text-xs text-orange-700 border border-orange-100"
+                          >
                             {item}
                           </span>
                         ))}
@@ -415,7 +535,7 @@ export default function MenuPricing() {
                       <button
                         key={paper.id}
                         onClick={() => setSelectedPaper(paper.id)}
-                        className={`relative p-3 rounded-xl text-left transition-all ${
+                        className={`relative p-4 rounded-xl text-left transition-all ${
                           selectedPaper === paper.id
                             ? `bg-gradient-to-r ${getPaperColor(paper.color)} text-white shadow-md`
                             : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
@@ -427,7 +547,24 @@ export default function MenuPricing() {
                           </span>
                         )}
                         <div className="text-sm font-bold">{paper.name}</div>
-                        <div className="text-xs opacity-80 mt-1">{paper.description}</div>
+                        <div className="text-xs opacity-80 mt-1">{paper.weight}</div>
+                        <div className="text-xs opacity-70 mt-1">{paper.description}</div>
+                        
+                        {/* Features preview */}
+                        {selectedPaper === paper.id && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            className="mt-2 pt-2 border-t border-white/20"
+                          >
+                            {paper.features.map((feature, i) => (
+                              <div key={i} className="text-xs flex items-center gap-1">
+                                <Check className="h-3 w-3" />
+                                {feature}
+                              </div>
+                            ))}
+                          </motion.div>
+                        )}
                       </button>
                     ))}
                   </div>
@@ -442,22 +579,26 @@ export default function MenuPricing() {
                     </div>
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {finishingOptions.map((finish) => (
-                      <button
-                        key={finish.id}
-                        onClick={() => setSelectedFinish(finish.id)}
-                        className={`p-3 rounded-xl text-center transition-all ${
-                          selectedFinish === finish.id
-                            ? 'bg-orange-600 text-white shadow-md'
-                            : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
-                        }`}
-                      >
-                        <div className="text-sm font-bold">{finish.name}</div>
-                        {finish.price > 0 && (
-                          <div className="text-xs opacity-80">+{formatCurrency(finish.price)}</div>
-                        )}
-                      </button>
-                    ))}
+                    {finishingOptions.map((finish) => {
+                      const Icon = finish.icon
+                      return (
+                        <button
+                          key={finish.id}
+                          onClick={() => setSelectedFinish(finish.id)}
+                          className={`p-3 rounded-xl text-center transition-all ${
+                            selectedFinish === finish.id
+                              ? 'bg-orange-600 text-white shadow-md'
+                              : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          <Icon className="h-5 w-5 mx-auto mb-1" />
+                          <div className="text-sm font-bold">{finish.name}</div>
+                          {finish.price > 0 && (
+                            <div className="text-xs opacity-80">+{formatCurrency(finish.price)}</div>
+                          )}
+                        </button>
+                      )
+                    })}
                   </div>
                 </div>
 
@@ -466,36 +607,48 @@ export default function MenuPricing() {
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     <div className="flex items-center gap-2">
                       <Ruler className="h-4 w-4 text-orange-600" />
-                      Quantity
+                      Select Quantity
                     </div>
                   </label>
                   <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                    {currentMenu.tiers.map((tier) => (
-                      <button
-                        key={tier.qty}
-                        onClick={() => setQuantity(tier.qty)}
-                        className={`py-3 px-2 rounded-lg text-sm font-medium transition-all ${
-                          quantity === tier.qty
-                            ? 'bg-orange-600 text-white shadow-md'
-                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        {tier.qty} copies
-                      </button>
-                    ))}
+                    {currentMenu.tiers.map((tier) => {
+                      const savings = tier.qty >= 500 ? "Best value" : 
+                                     tier.qty >= 250 ? "Popular" : ""
+                      return (
+                        <button
+                          key={tier.qty}
+                          onClick={() => setQuantity(tier.qty)}
+                          className={`relative py-3 px-2 rounded-lg text-sm font-medium transition-all ${
+                            quantity === tier.qty
+                              ? 'bg-orange-600 text-white shadow-md'
+                              : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                          }`}
+                        >
+                          {tier.qty} menus
+                          {savings && (
+                            <span className="absolute -top-2 -right-2 bg-green-500 text-white text-[10px] px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                              {savings}
+                            </span>
+                          )}
+                        </button>
+                      )
+                    })}
                   </div>
                 </div>
 
-                {/* Design Service Toggle */}
-                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-4">
+                {/* Additional Options */}
+                <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-2">Additional Options</h4>
+                  
+                  {/* Design Service Toggle */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-start gap-3">
                       <div className="p-2 bg-purple-100 rounded-lg">
-                        <Brush className="h-5 w-5 text-purple-600" />
+                        <Brush className="h-4 w-4 text-purple-600" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">Need Menu Design?</h4>
-                        <p className="text-sm text-gray-600">Professional menu design service</p>
+                        <h4 className="font-medium text-gray-900">Professional Menu Design</h4>
+                        <p className="text-xs text-gray-500">Custom design with 3 revisions</p>
                       </div>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
@@ -508,18 +661,53 @@ export default function MenuPricing() {
                       <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
                     </label>
                   </div>
-                  {includeDesign && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      className="mt-3 text-sm text-purple-600 bg-purple-100 rounded-lg p-2"
-                    >
-                      ✓ Professional menu design - £95 one-time fee
-                    </motion.div>
-                  )}
+
+                  {/* Spot UV */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 bg-amber-100 rounded-lg">
+                        <Sparkles className="h-4 w-4 text-amber-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">Spot UV Finish</h4>
+                        <p className="text-xs text-gray-500">High gloss accents (+£45)</p>
+                      </div>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={includeUV}
+                        onChange={(e) => setIncludeUV(e.target.checked)}
+                      />
+                      <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-amber-600"></div>
+                    </label>
+                  </div>
+
+                  {/* Urgent Order */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Clock className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">Urgent (24hr)</h4>
+                        <p className="text-xs text-gray-500">+25% rush fee</p>
+                      </div>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={urgentOrder}
+                        onChange={(e) => setUrgentOrder(e.target.checked)}
+                      />
+                      <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
                 </div>
 
-                {/* Quick Actions */}
+                {/* Action Buttons */}
                 <div className="flex gap-2 pt-2">
                   <Button 
                     variant="outline" 
@@ -527,17 +715,19 @@ export default function MenuPricing() {
                     onClick={() => setShowSpecs(!showSpecs)}
                   >
                     <Info className="h-4 w-4 mr-2" />
-                    {showSpecs ? 'Hide' : 'View'} Specs
+                    {showSpecs ? 'Hide' : 'View'} Full Specs
                   </Button>
-                  <Link href="/quote" className="flex-1">
-                    <Button variant="outline" className="w-full rounded-xl">
-                      <Download className="h-4 w-4 mr-2" />
-                      Get Quote
-                    </Button>
-                  </Link>
+                  <Button 
+                    variant="outline" 
+                    className="flex-1 rounded-xl"
+                    onClick={() => setShowComparison(!showComparison)}
+                  >
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                    Compare Prices
+                  </Button>
                 </div>
 
-                {/* Specifications Panel */}
+                {/* Full Specifications Panel */}
                 <AnimatePresence>
                   {showSpecs && (
                     <motion.div
@@ -546,33 +736,46 @@ export default function MenuPricing() {
                       exit={{ opacity: 0, height: 0 }}
                       className="bg-blue-50 rounded-xl p-4 overflow-hidden"
                     >
-                      <h4 className="text-sm font-semibold text-blue-900 mb-2">Print Specifications</h4>
-                      <ul className="grid grid-cols-2 gap-2 text-sm text-blue-800">
-                        <li className="flex items-center gap-2">
-                          <Check className="h-4 w-4" />
-                          Full colour both sides
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="h-4 w-4" />
-                          Crop marks included
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="h-4 w-4" />
-                          3mm bleed
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="h-4 w-4" />
-                          PDF/X-1a ready
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="h-4 w-4" />
-                          Free artwork check
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="h-4 w-4" />
-                          24-48hr turnaround
-                        </li>
-                      </ul>
+                      <h4 className="text-sm font-semibold text-blue-900 mb-2">Complete Specifications</h4>
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-blue-800 font-medium">Print Details</p>
+                          <ul className="mt-2 space-y-1">
+                            <li className="flex items-center gap-2 text-blue-700">
+                              <Check className="h-3 w-3" />
+                              Full colour both sides
+                            </li>
+                            <li className="flex items-center gap-2 text-blue-700">
+                              <Check className="h-3 w-3" />
+                              3mm bleed included
+                            </li>
+                            <li className="flex items-center gap-2 text-blue-700">
+                              <Check className="h-3 w-3" />
+                              Crop marks
+                            </li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="text-blue-800 font-medium">File Requirements</p>
+                          <ul className="mt-2 space-y-1">
+                            <li className="flex items-center gap-2 text-blue-700">
+                              <Check className="h-3 w-3" />
+                              PDF/X-1a format
+                            </li>
+                            <li className="flex items-center gap-2 text-blue-700">
+                              <Check className="h-3 w-3" />
+                              300dpi resolution
+                            </li>
+                            <li className="flex items-center gap-2 text-blue-700">
+                              <Check className="h-3 w-3" />
+                              CMYK colour mode
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <p className="text-xs text-blue-600 mt-3">
+                        * Free artwork check included with all orders
+                      </p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -585,45 +788,58 @@ export default function MenuPricing() {
                   
                   <AnimatePresence mode="wait">
                     <motion.div
-                      key={`${selectedMenuType}-${selectedPaper}-${selectedFinish}-${quantity}-${includeDesign}`}
+                      key={`${selectedMenuType}-${selectedPaper}-${selectedFinish}-${quantity}-${includeDesign}-${includeUV}-${urgentOrder}`}
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       className="space-y-4"
                     >
+                      {/* Price Display */}
                       <div>
                         <div className="text-4xl font-bold mb-1">
-                          {formatCurrency(subtotal)}
+                          {formatCurrency(total)}
                         </div>
                         <p className="text-white/80 text-sm">
-                          + VAT | {formatCurrency(unitPrice)} per menu
+                          inc. VAT | {formatCurrency(unitPrice)} per menu
                         </p>
                       </div>
 
+                      {/* Price Breakdown */}
                       <div className="space-y-2 py-4 border-y border-white/20">
                         <div className="flex justify-between text-sm">
-                          <span className="text-white/80">Menu type:</span>
-                          <span className="font-medium">{currentMenu.name}</span>
+                          <span className="text-white/80">Base price ({quantity} menus):</span>
+                          <span className="font-medium">{formatCurrency(getBasePrice())}</span>
                         </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-white/80">Paper:</span>
-                          <span className="font-medium">{currentPaper.name}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-white/80">Finish:</span>
-                          <span className="font-medium">{currentFinish.name}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-white/80">Quantity:</span>
-                          <span className="font-medium">{quantity} menus</span>
-                        </div>
-                        {includeDesign && (
+                        {designFee > 0 && (
                           <div className="flex justify-between text-sm">
                             <span className="text-white/80">Design service:</span>
-                            <span className="font-medium">{formatCurrency(95)}</span>
+                            <span className="font-medium">{formatCurrency(designFee)}</span>
                           </div>
                         )}
+                        {finishingFee > 0 && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-white/80">{currentFinish.name}:</span>
+                            <span className="font-medium">{formatCurrency(finishingFee)}</span>
+                          </div>
+                        )}
+                        {uvFee > 0 && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-white/80">Spot UV:</span>
+                            <span className="font-medium">{formatCurrency(uvFee)}</span>
+                          </div>
+                        )}
+                        {urgentFee > 0 && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-white/80">Urgent fee:</span>
+                            <span className="font-medium">{formatCurrency(urgentFee)}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between text-sm pt-2 border-t border-white/20">
+                          <span className="text-white/80">VAT (20%):</span>
+                          <span className="font-medium">{formatCurrency(vat)}</span>
+                        </div>
                       </div>
 
+                      {/* Order Buttons */}
                       <div className="space-y-3">
                         <Link href={`/order/menus?type=${selectedMenuType}&qty=${quantity}`}>
                           <Button className="w-full bg-white text-orange-600 hover:bg-gray-100 rounded-xl py-6 text-lg font-semibold">
@@ -632,14 +848,27 @@ export default function MenuPricing() {
                           </Button>
                         </Link>
                         
-                        <button
-                          onClick={() => setShowComparison(!showComparison)}
-                          className="w-full flex items-center justify-center gap-2 text-white/80 hover:text-white transition-colors py-2 text-sm"
-                        >
-                          <Star className="h-4 w-4" />
-                          {showComparison ? 'Hide' : 'Compare'} menu options
-                          {showComparison ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                        </button>
+                        <Link href="/quote">
+                          <Button variant="outline" className="w-full border-white/30 text-white hover:bg-white/10 rounded-xl">
+                            Request Quote
+                          </Button>
+                        </Link>
+                      </div>
+
+                      {/* Trust Badges */}
+                      <div className="grid grid-cols-3 gap-2 pt-2">
+                        <div className="text-center">
+                          <Truck className="h-4 w-4 mx-auto mb-1" />
+                          <span className="text-xs">Free UK delivery</span>
+                        </div>
+                        <div className="text-center">
+                          <Award className="h-4 w-4 mx-auto mb-1" />
+                          <span className="text-xs">Quality guaranteed</span>
+                        </div>
+                        <div className="text-center">
+                          <Clock className="h-4 w-4 mx-auto mb-1" />
+                          <span className="text-xs">24-48hr turnaround</span>
+                        </div>
                       </div>
                     </motion.div>
                   </AnimatePresence>
@@ -685,7 +914,10 @@ export default function MenuPricing() {
                           }`}
                         >
                           <td className="py-3 px-4 text-sm font-medium text-gray-900">
-                            {menu.name}
+                            <div className="flex items-center gap-2">
+                              <menu.icon className="h-4 w-4 text-orange-600" />
+                              {menu.name}
+                            </div>
                           </td>
                           <td className="py-3 px-4 text-sm text-gray-600">{menu.size}</td>
                           <td className="py-3 px-4 text-sm text-gray-600">{menu.pages}</td>
@@ -704,60 +936,12 @@ export default function MenuPricing() {
                 </div>
 
                 <p className="text-xs text-gray-500 mt-4">
-                  * Prices for {currentPaper.name} paper. Design service and finishing options extra.
+                  * Prices for standard paper (150gsm gloss). Premium papers and finishing options extra.
                 </p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Trust Badges */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12"
-        >
-          <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Printer className="h-5 w-5 text-orange-600" />
-            </div>
-            <div>
-              <div className="font-semibold text-gray-900">24-48hr</div>
-              <div className="text-xs text-gray-500">Turnaround</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Truck className="h-5 w-5 text-green-600" />
-            </div>
-            <div>
-              <div className="font-semibold text-gray-900">Free UK</div>
-              <div className="text-xs text-gray-500">Delivery over £50</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Award className="h-5 w-5 text-blue-600" />
-            </div>
-            <div>
-              <div className="font-semibold text-gray-900">Restaurant</div>
-              <div className="text-xs text-gray-500">Quality Guarantee</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Brush className="h-5 w-5 text-purple-600" />
-            </div>
-            <div>
-              <div className="font-semibold text-gray-900">Design</div>
-              <div className="text-xs text-gray-500">Service Available</div>
-            </div>
-          </div>
-        </motion.div>
 
         {/* Restaurant Info Banner */}
         <motion.div
@@ -766,14 +950,23 @@ export default function MenuPricing() {
           transition={{ delay: 0.6 }}
           className="mt-8 bg-gradient-to-r from-amber-100 to-orange-100 rounded-2xl p-6 text-center"
         >
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">🍽️ Restaurant Menu Specialists</h3>
-          <p className="text-gray-700 mb-4">Over 500+ restaurants trust us with their menu printing. Free design consultation available.</p>
-          <Link href="/consultation">
-            <Button variant="outline" className="bg-white border-orange-300 text-orange-700 hover:bg-orange-50">
-              Book Free Consultation
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="bg-white p-3 rounded-full">
+                <Utensils className="h-6 w-6 text-orange-600" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-lg font-semibold text-gray-900">🍽️ Restaurant Menu Specialists</h3>
+                <p className="text-gray-700">Over 500+ restaurants trust us with their menu printing</p>
+              </div>
+            </div>
+            <Link href="/consultation">
+              <Button className="bg-white text-orange-600 hover:bg-orange-50 border border-orange-300 rounded-xl">
+                Free Design Consultation
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </motion.div>
       </div>
     </section>

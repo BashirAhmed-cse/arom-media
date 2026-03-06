@@ -1,220 +1,301 @@
 // components/sections/Hero.tsx
 "use client"
 
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect, useRef } from "react"
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
 import { 
-  Upload, 
-  Brush, 
-  CheckCircle,
   Printer,
+  Palette,
+  Sparkles,
+  ArrowRight,
+  ChevronDown,
+  Star,
+  Users,
+  Award,
   Clock,
-  Truck,
-  Shield,
-  ArrowRight
+  Zap
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
+import { cn } from "@/lib/utils"
 
 export default function Hero() {
-  const [activeTab, setActiveTab] = useState<'upload' | 'design'>('upload')
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll()
+  
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const springConfig = { damping: 25, stiffness: 200 }
+  const springX = useSpring(mouseX, springConfig)
+  const springY = useSpring(mouseY, springConfig)
+
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8])
+  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, -100])
+
+  useEffect(() => {
+    setIsLoaded(true)
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX)
+      mouseY.set(e.clientY)
+      setMousePosition({ x: e.clientX, y: e.clientY })
+    }
+    
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [mouseX, mouseY])
+
+  const floatingAnimation = {
+    initial: { y: 0 },
+    animate: {
+      y: [-10, 10, -10],
+      transition: {
+        duration: 6,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  }
+
+  const stats = [
+    { icon: <Users className="h-4 w-4" />, value: "10k+", label: "Happy Clients" },
+    { icon: <Award className="h-4 w-4" />, value: "15+", label: "Years Experience" },
+    { icon: <Star className="h-4 w-4" />, value: "4.9", label: "Trustpilot" },
+    { icon: <Clock className="h-4 w-4" />, value: "24-48h", label: "Turnaround" }
+  ]
 
   return (
-    <section className="bg-gradient-to-b from-gray-50 to-white pt-12 pb-16 md:pt-16 md:pb-24">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Simple Badge */}
+    <section 
+      ref={containerRef}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black"
+    >
+      {/* Animated Background */}
+      <div className="absolute inset-0">
+        {/* Gradient Orbs */}
+        <motion.div
+          variants={floatingAnimation}
+          initial="initial"
+          animate="animate"
+          className="absolute top-20 left-10 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-3xl"
+        />
+        <motion.div
+          variants={floatingAnimation}
+          initial="initial"
+          animate="animate"
+          className="absolute bottom-20 right-10 w-[600px] h-[600px] bg-pink-600/20 rounded-full blur-3xl"
+          style={{ animationDelay: "-2s" }}
+        />
+        <motion.div
+          variants={floatingAnimation}
+          initial="initial"
+          animate="animate"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-3xl"
+          style={{ animationDelay: "-4s" }}
+        />
+
+        {/* Grid Pattern */}
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+            backgroundSize: '50px 50px'
+          }}
+        />
+
+        {/* Floating Particles */}
+        {[...Array(30)].map((_, i) => (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 bg-purple-100 px-4 py-2 rounded-full mb-6"
+            key={i}
+            className="absolute w-1 h-1 bg-white/20 rounded-full"
+            initial={{
+              x: Math.random() * 100 + "%",
+              y: Math.random() * 100 + "%",
+            }}
+            animate={{
+              x: `${Math.random() * 100}%`,
+              y: `${Math.random() * 100}%`,
+              scale: [1, 1.5, 1],
+              opacity: [0.2, 0.5, 0.2],
+            }}
+            transition={{
+              duration: Math.random() * 10 + 10,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Mouse Follow Glow */}
+      <motion.div
+        className="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-r from-purple-600/10 to-pink-600/10 blur-3xl pointer-events-none hidden lg:block"
+        style={{
+          x: springX,
+          y: springY,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+      />
+
+      {/* Main Content */}
+      <motion.div
+        style={{
+          opacity: heroOpacity,
+          scale: heroScale,
+          y: heroY,
+        }}
+        className="relative z-10 container mx-auto px-4 py-20"
+      >
+        <div className="max-w-5xl mx-auto text-center">
+          {/* Animated Badge */}
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={isLoaded ? { scale: 1, opacity: 1 } : {}}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="inline-block mb-8"
           >
-            <span className="w-2 h-2 bg-purple-600 rounded-full"></span>
-            <span className="text-sm font-medium text-purple-700">
-              UK Printing & Design Services
-            </span>
+            <Badge className="px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm bg-white/5 backdrop-blur-md border-white/10 text-white/90">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="mr-2"
+              >
+                <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-purple-400" />
+              </motion.div>
+              <span className="hidden sm:inline">✦ </span>
+              UK's Premier Print & Design Studio
+              <span className="hidden sm:inline"> ✦</span>
+            </Badge>
           </motion.div>
 
-          {/* Main Headline - Clean & Clear */}
-          <motion.h1
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6"
+          {/* Main Title */}
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={isLoaded ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="text-7xl  font-black tracking-tighter mb-6"
           >
-            Professional Printing & 
-            <span className="text-purple-600 block mt-2">Design Services in the UK</span>
+            <motion.span
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
+              className="inline-block text-white"
+            >
+              Professional Printing 
+            </motion.span>{" "}
+            <motion.span
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6, type: "spring", stiffness: 100 }}
+              className="inline-block bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400 bg-clip-text text-transparent"
+            >
+              & 
+            </motion.span>
+            <br className="hidden sm:block" />
+            <motion.span
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, type: "spring", stiffness: 100 }}
+              className="inline-block bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent"
+            >
+              Design Services in the UK
+            </motion.span>
           </motion.h1>
 
-          {/* Subheadline */}
+          {/* Description */}
           <motion.p
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto"
+            transition={{ delay: 1, duration: 0.8 }}
+            className="text-base sm:text-lg md:text-xl text-white/60 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed"
           >
-            From business cards to banners. Upload your design or let our experts create one for you. 
+           From business cards to banners. Upload your design or let our experts create one for you. 
             Fast turnaround, premium quality, nationwide delivery.
           </motion.p>
 
-          {/* Simple Tab Selector */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white p-1 rounded-2xl shadow-sm border border-gray-200 inline-flex mb-8"
-          >
-            <button
-              onClick={() => setActiveTab('upload')}
-              className={`px-6 py-3 rounded-xl text-sm font-medium transition-all ${
-                activeTab === 'upload'
-                  ? 'bg-purple-600 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                I Have a Design
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab('design')}
-              className={`px-6 py-3 rounded-xl text-sm font-medium transition-all ${
-                activeTab === 'design'
-                  ? 'bg-purple-600 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Brush className="h-4 w-4" />
-                I Need Design Help
-              </div>
-            </button>
-          </motion.div>
-
-          {/* Dynamic Content Based on Selection */}
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-200"
-          >
-            {activeTab === 'upload' ? (
-              <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-                <div className="flex items-center gap-2 text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-green-500" />
-                  <span>Upload PDF, AI, PSD, JPG</span>
-                </div>
-                <div className="hidden md:block w-px h-6 bg-gray-300"></div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-green-500" />
-                  <span>Free file check</span>
-                </div>
-                <div className="hidden md:block w-px h-6 bg-gray-300"></div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-green-500" />
-                  <span>Same-day printing</span>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-                <div className="flex items-center gap-2 text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-purple-500" />
-                  <span>Professional designers</span>
-                </div>
-                <div className="hidden md:block w-px h-6 bg-gray-300"></div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-purple-500" />
-                  <span>Unlimited revisions</span>
-                </div>
-                <div className="hidden md:block w-px h-6 bg-gray-300"></div>
-                <div className="flex items-center gap-2 text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-purple-500" />
-                  <span>Brand identity experts</span>
-                </div>
-              </div>
-            )}
-          </motion.div>
-
           {/* CTA Buttons */}
+         
+
+          {/* Stats Grid */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
+            transition={{ delay: 1.4, duration: 0.8 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-3xl mx-auto"
           >
-            {activeTab === 'upload' ? (
-              <Link href="/upload">
-                <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg rounded-xl">
-                  Upload Your Design
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            ) : (
-              <Link href="/design">
-                <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg rounded-xl">
-                  Start Your Design Project
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            )}
-            
-            <Link href="/quote">
-              <Button size="lg" variant="outline" className="px-8 py-6 text-lg rounded-xl border-2">
-                Get a Quote
-              </Button>
-            </Link>
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.5 + index * 0.1 }}
+                whileHover={{ y: -3 }}
+                className="text-center"
+              >
+                <div className="flex items-center justify-center gap-1 text-purple-400 mb-1">
+                  {stat.icon}
+                </div>
+                <div className="text-xl sm:text-2xl font-bold text-white">
+                  {stat.value}
+                </div>
+                <div className="text-xs text-white/40">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
           </motion.div>
 
-          {/* Trust Indicators */}
+          {/* Trust Badges */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.8 }}
+            className="flex flex-wrap items-center justify-center gap-4 mt-12"
           >
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Printer className="h-5 w-5 text-purple-600" />
-              </div>
-              <div className="text-left">
-                <div className="font-semibold text-gray-900">24-48hr</div>
-                <div className="text-xs text-gray-500">Turnaround</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Truck className="h-5 w-5 text-green-600" />
-              </div>
-              <div className="text-left">
-                <div className="font-semibold text-gray-900">Free UK</div>
-                <div className="text-xs text-gray-500">Delivery over £50</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Shield className="h-5 w-5 text-blue-600" />
-              </div>
-              <div className="text-left">
-                <div className="font-semibold text-gray-900">100%</div>
-                <div className="text-xs text-gray-500">Quality Guarantee</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-100 rounded-lg">
-                <Clock className="h-5 w-5 text-amber-600" />
-              </div>
-              <div className="text-left">
-                <div className="font-semibold text-gray-900">10k+</div>
-                <div className="text-xs text-gray-500">Happy Clients</div>
-              </div>
-            </div>
+            <Badge variant="outline" className="border-purple-500/30 text-purple-400 bg-purple-500/10">
+              <Zap className="h-3 w-3 mr-1" />
+              UK Based
+            </Badge>
+            <Badge variant="outline" className="border-blue-500/30 text-blue-400 bg-blue-500/10">
+              Free Delivery*
+            </Badge>
+            <Badge variant="outline" className="border-green-500/30 text-green-400 bg-green-500/10">
+              24-48hr Turnaround
+            </Badge>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
+
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden md:block"
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="flex flex-col items-center gap-2"
+        >
+          <span className="text-white/40 text-xs tracking-wider">SCROLL</span>
+          <div className="w-5 h-8 border-2 border-white/20 rounded-full flex justify-center">
+            <motion.div
+              animate={{ y: [0, 15, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-1 h-2 bg-white/40 rounded-full mt-2"
+            />
+          </div>
+          <ChevronDown className="h-4 w-4 text-white/20" />
+        </motion.div>
+      </motion.div>
+
+      {/* Bottom Gradient Fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent pointer-events-none" />
     </section>
   )
 }

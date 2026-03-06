@@ -4,35 +4,27 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
-  Palette,
   Printer,
+  Palette,
   Sparkles,
-  FileText,
-  Brush,
-  Download,
-  Phone,
-  Mail,
   Menu,
   X,
-  ChevronRight,
   ChevronDown,
-  PaintBucket,
-  Layers,
-  ShoppingCart,
   User,
-  Quote,
+  Phone,
+  Mail,
   Clock,
-  Shield,
-  Star
+  Zap
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isHovered, setIsHovered] = useState<string | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,461 +34,274 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const colorPalette = {
-    primary: "#7C3AED",    // Vibrant Purple (Arom brand)
-    secondary: "#06D6A0",  // Mint Green
-    accent: "#FF6B6B",     // Coral Red
-    blue: "#118AB2",       // Ocean Blue
-    yellow: "#FFD166",     // Sunshine Yellow
-    indigo: "#4F46E5",     // Indigo
-  }
-
-  const navItems = [
-    { 
-      name: "Home", 
-      href: "/",
-      icon: <Sparkles className="h-4 w-4" />,
-      color: colorPalette.yellow
-    },
-    { 
-      name: "Design Studio", 
-      href: "/design-studio",
-      icon: <Palette className="h-4 w-4" />,
-      color: colorPalette.primary,
-      dropdown: [
-        { 
-          name: "Menu Design", 
-          icon: FileText, 
-          description: "Restaurant & café menus",
-          color: colorPalette.primary,
-          href: "/services/menu-design"
-        },
-        { 
-          name: "Business Cards", 
-          icon: Brush, 
-          description: "Premium card printing",
-          color: colorPalette.secondary,
-          href: "/services/business-cards"
-        },
-        { 
-          name: "Banners & Signs", 
-          icon: Image, 
-          description: "Large format printing",
-          color: colorPalette.blue,
-          href: "/services/banners"
-        },
-        { 
-          name: "Brand Identity", 
-          icon: PaintBucket, 
-          description: "Complete branding packages",
-          color: colorPalette.indigo,
-          href: "/services/brand-identity"
-        },
-        { 
-          name: "Social Media Kits", 
-          icon: Layers, 
-          description: "Graphics & templates",
-          color: colorPalette.accent,
-          href: "/services/social-media"
-        },
-      ]
-    },
-    { 
-      name: "Print Services", 
-      href: "/services",
-      icon: <Printer className="h-4 w-4" />,
-      color: colorPalette.blue
-    },
-    { 
-      name: "Portfolio", 
-      href: "/portfolio",
-      icon: <Palette className="h-4 w-4" />,
-      color: colorPalette.indigo
-    },
-    { 
-      name: "Upload & Print", 
-      href: "/upload",
-      icon: <Download className="h-4 w-4" />,
-      color: colorPalette.secondary
-    },
-  ]
-
   return (
     <>
-      {/* Enhanced Top Bar */}
+      {/* Top Bar - Modern Dark with Gradient */}
       <motion.div 
-        initial={{ y: -30 }}
+        initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="relative overflow-hidden bg-gradient-to-r from-purple-900 to-indigo-900"
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="relative bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white text-sm border-b border-white/10"
       >
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
-        
-        <div className="relative z-10 container mx-auto px-4 sm:px-6">
-          <div className="flex flex-wrap items-center justify-between gap-2 py-2 text-white text-sm">
-            {/* Contact Info */}
-            <div className="flex items-center flex-wrap gap-3">
-              <a 
-                href="tel:+442071234567" 
-                className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full transition-colors"
-              >
-                <Phone className="h-3 w-3" />
-                <span className="text-xs sm:text-sm">+44 (0)20 7123 4567</span>
-              </a>
-              <a 
-                href="mailto:hello@arommedia.co.uk" 
-                className="hidden md:flex items-center space-x-2 bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full transition-colors"
-              >
-                <Mail className="h-3 w-3" />
-                <span className="text-sm">hello@arommedia.co.uk</span>
-              </a>
-            </div>
-            
-            {/* Trust Indicators */}
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between py-2">
             <div className="flex items-center gap-4">
-              <div className="hidden sm:flex items-center space-x-1 text-white/80">
-                <Shield className="h-3 w-3" />
-                <span className="text-xs">Secure</span>
-              </div>
-              <div className="hidden sm:flex items-center space-x-1 text-white/80">
-                <Clock className="h-3 w-3" />
-                <span className="text-xs">24-48hr</span>
-              </div>
-              <motion.div 
-                className="flex items-center space-x-2 bg-green-500/20 px-3 py-1 rounded-full"
-                animate={{ scale: [1, 1.02, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
+              <motion.a 
+                href="tel:+442071234567" 
+                className="flex items-center gap-1 hover:text-purple-400 transition-colors group"
+                whileHover={{ x: 2 }}
               >
-                <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
-                <span className="text-xs font-bold text-green-400">FREE UK DELIVERY</span>
-              </motion.div>
+                <Phone className="h-3 w-3 text-purple-400 group-hover:rotate-12 transition-transform" />
+                <span>077 37062865</span>
+              </motion.a>
+              <motion.a 
+                href="mailto:hello@arommedia.co.uk" 
+                className="flex items-center gap-1 hover:text-purple-400 transition-colors group"
+                whileHover={{ x: 2 }}
+              >
+                <Mail className="h-3 w-3 text-purple-400 group-hover:rotate-12 transition-transform" />
+                <span>hello@arommedia.co.uk</span>
+              </motion.a>
+            </div>
+            <div className="flex items-center gap-2 text-white/60">
+              <Clock className="h-3 w-3 text-purple-400" />
+              <span>Mon-Fri: 9am - 6pm</span>
             </div>
           </div>
         </div>
       </motion.div>
 
       {/* Main Header */}
-      <header 
-        className={`sticky top-0 z-50 transition-all duration-300 ${
+      <motion.header 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+        className={cn(
+          "sticky top-0 z-50 transition-all duration-300",
           isScrolled 
-            ? "bg-white/95 backdrop-blur-md shadow-lg" 
-            : "bg-white shadow-md"
-        }`}
+            ? "bg-gray-900/95 backdrop-blur-xl border-b border-white/10 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]" 
+            : "bg-gray-900"
+        )}
       >
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="flex h-16 sm:h-20 items-center justify-between">
-            {/* Logo - Using actual logo.png */}
-           <Link href="/" className="group relative">
-              <div className="flex items-center space-x-3 sm:space-x-4">
-                {/* Animated Logo Container */}
-                <div className="relative">
-                  <motion.div 
-                    className="absolute -inset-3 sm:-inset-4"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                  >
-                    {[colorPalette.primary, colorPalette.secondary, colorPalette.accent].map((color, i) => (
-                      <div
-                        key={i}
-                        className="absolute h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full"
-                        style={{
-                          backgroundColor: color,
-                          top: `${Math.sin((i * Math.PI * 2) / 3) * 14}px`,
-                          left: `${Math.cos((i * Math.PI * 2) / 3) * 14}px`,
-                        }}
-                      />
-                    ))}
-                  </motion.div>
-                  
-                  {/* Main Logo */}
-                  <motion.div 
-                    whileHover={{ 
-                      rotate: [0, -5, 5, 0],
-                    }}
-                    transition={{ duration: 0.5 }}
-                    className="relative h-10 w-10 sm:h-12 sm:w-12 rounded-xl shadow-lg overflow-hidden group"
-                  >
-                    {/* Gradient background */}
-                    <div 
-                      className="absolute inset-0 opacity-90 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{
-                        background: `linear-gradient(135deg, ${colorPalette.primary}, ${colorPalette.indigo})`
-                      }}
-                    />
-                    
-                    {/* Pattern overlay */}
-                    <div className="absolute inset-0 opacity-20">
-                      <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.3)_1px,transparent_1px)] bg-[length:16px_16px]"></div>
-                    </div>
-                    
-                    {/* Logo content */}
-                    <div className="relative h-full w-full flex items-center justify-center">
-                      <div className="flex items-center space-x-1">
-                        <Palette className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                        <Printer className="h-4 w-4 sm:h-5 sm:w-5 text-white/90" />
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Brand Text */}
-                <div>
-                  <motion.h1 
-                    className="text-2xl sm:text-3xl font-black"
-                    whileHover={{ scale: 1.02 }}
-                  >
-                    <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                      Arom
-                    </span>
-                    <span 
-                      className="ml-1 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent"
-                    >
-                      Media
-                    </span>
-                  </motion.h1>
-                  <div className="flex items-center space-x-1 sm:space-x-2 mt-0.5">
-                    <div className="h-1 w-4 sm:w-6 rounded-full bg-gradient-to-r from-purple-500 to-purple-600"></div>
-                    <div className="h-1 w-4 sm:w-6 rounded-full bg-gradient-to-r from-blue-500 to-blue-600"></div>
-                    <div className="h-1 w-4 sm:w-6 rounded-full bg-gradient-to-r from-green-500 to-green-600"></div>
-                    <p className="text-[10px] sm:text-xs text-gray-500 font-medium ml-1 sm:ml-2">
-                      UK DESIGN & PRINT
-                    </p>
+        <div className="container mx-auto px-4">
+          <div className="flex h-20 items-center justify-between">
+            {/* Logo - Modern with Animation */}
+            <Link href="/" className="flex items-center gap-3 group">
+              <motion.div 
+                whileHover={{ rotate: 5, scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative h-12 w-12"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 rounded-xl opacity-80 group-hover:opacity-100 blur-md group-hover:blur-lg transition-all" />
+                <div className="relative h-full w-full bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 rounded-xl flex items-center justify-center">
+                  <div className="absolute inset-0 bg-white/10 rounded-xl" />
+                  <div className="relative flex gap-1">
+                    <Printer className="h-5 w-5 text-white" />
+                    <Palette className="h-5 w-5 text-white" />
                   </div>
                 </div>
+              </motion.div>
+              <div>
+                <div className="flex items-baseline">
+                  <span className="text-2xl font-black text-white">AROM</span>
+                  <span className="text-2xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent ml-1">MEDIA</span>
+                </div>
+                <p className="text-xs text-white/40">Print & Design</p>
               </div>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-1">
-              {navItems.map((item) => (
-                <div 
-                  key={item.name}
-                  className="relative"
-                  onMouseEnter={() => item.dropdown && setActiveDropdown(item.name)}
-                  onMouseLeave={() => setActiveDropdown(null)}
-                >
-                  <Link
-                    href={item.href}
-                    className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-purple-50 transition-all group"
+            <div className="hidden md:flex items-center gap-4">
+              {/* Print Only Button */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onHoverStart={() => setIsHovered('print')}
+                onHoverEnd={() => setIsHovered(null)}
+              >
+                <Link href="/print">
+                  <Button 
+                    variant="outline" 
+                    className="relative overflow-hidden border-2 border-purple-500/50 text-white hover:text-white px-6 py-5 bg-transparent hover:border-purple-500 transition-all"
                   >
-                    <span 
-                      className="p-1.5 rounded-md transition-colors group-hover:bg-purple-100"
-                      style={{ color: item.color }}
-                    >
-                      {item.icon}
+                    <motion.div 
+                      className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 hover:opacity-100 transition-opacity"
+                      animate={isHovered === 'print' ? { scale: [1, 1.2, 1] } : {}}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                    <span className="relative z-10 flex items-center">
+                      <Printer className="h-4 w-4 mr-2" />
+                      Print Only
                     </span>
-                    <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900">
-                      {item.name}
+                  </Button>
+                </Link>
+              </motion.div>
+
+              {/* Design + Print Button */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onHoverStart={() => setIsHovered('design')}
+                onHoverEnd={() => setIsHovered(null)}
+              >
+                <Link href="/design-and-print">
+                  <Button 
+                    className="relative overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-5 border-0 shadow-lg shadow-purple-600/20"
+                  >
+                    <motion.div 
+                      className="absolute inset-0 bg-white/20"
+                      animate={isHovered === 'design' ? { scale: [1, 1.5, 1], opacity: [0, 0.3, 0] } : {}}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    />
+                    <span className="relative z-10 flex items-center">
+                      <Palette className="h-4 w-4 mr-2" />
+                      Design + Print
                     </span>
-                    {item.dropdown && (
-                      <ChevronDown className="h-3 w-3 text-gray-400 group-hover:text-purple-600 transition-colors" />
-                    )}
-                  </Link>
+                  </Button>
+                </Link>
+              </motion.div>
 
-                  {/* Enhanced Dropdown */}
-                  {item.dropdown && activeDropdown === item.name && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute left-0 top-full mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
-                    >
-                      <div className="p-2">
-                        <div className="px-3 py-2">
-                          <h3 className="text-sm font-semibold text-gray-900">Design Services</h3>
-                          <p className="text-xs text-gray-500">Professional solutions for your business</p>
-                        </div>
-                        
-                        <div className="space-y-1">
-                          {item.dropdown.map((service, index) => {
-                            const Icon = service.icon
-                            return (
-                              <motion.div
-                                key={service.name}
-                                initial={{ opacity: 0, x: -5 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.05 }}
-                              >
-                                <Link
-                                  href={service.href}
-                                  className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-all group"
-                                >
-                                  <div className="flex items-center space-x-3">
-                                    <div 
-                                      className="p-2 rounded-lg"
-                                      style={{ 
-                                        backgroundColor: `${service.color}15`,
-                                        color: service.color
-                                      }}
-                                    >
-                                      <Icon className="h-4 w-4" />
-                                    </div>
-                                    <div>
-                                      <h4 className="text-sm font-semibold text-gray-900">{service.name}</h4>
-                                      <p className="text-xs text-gray-500">{service.description}</p>
-                                    </div>
-                                  </div>
-                                  <ChevronRight className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-all" />
-                                </Link>
-                              </motion.div>
-                            )
-                          })}
-                        </div>
-                        
-                        <Link
-                          href="/services"
-                          className="mt-2 block text-center text-sm font-medium text-purple-600 hover:text-purple-700 py-2 border-t border-gray-100"
-                        >
-                          View all services →
-                        </Link>
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
-              ))}
-            </nav>
-
-            {/* Action Buttons - Shopping cart removed */}
-            <div className="flex items-center space-x-2">
-              {/* User Menu - Only user icon remaining */}
-              <div className="hidden sm:flex items-center space-x-1">
-                <Button variant="ghost" size="icon" className="rounded-full hover:bg-purple-50">
-                  <User className="h-5 w-5 text-gray-600" />
+              {/* User Button */}
+              <motion.div
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button variant="ghost" size="icon" className="rounded-full text-white/60 hover:text-white hover:bg-white/10">
+                  <User className="h-5 w-5" />
                 </Button>
-              </div>
+              </motion.div>
 
-              {/* Primary CTA */}
-              <Button 
-                className="rounded-full px-4 sm:px-6 font-semibold text-white shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-              >
-                <Sparkles className="h-4 w-4 mr-2" />
-                <span>Design Now</span>
-              </Button>
-
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden p-2 rounded-lg hover:bg-purple-50 transition-colors"
-              >
-                {isMenuOpen ? (
-                  <X className="h-5 w-5 text-purple-600" />
-                ) : (
-                  <Menu className="h-5 w-5 text-purple-600" />
-                )}
-              </button>
+              {/* Decorative Badge */}
+              <Badge variant="outline" className="border-purple-500/30 text-purple-400 bg-purple-500/10">
+                <Zap className="h-3 w-3 mr-1 text-purple-400" />
+                UK Based
+              </Badge>
             </div>
+
+            {/* Mobile Menu Button */}
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden relative w-10 h-10 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+            >
+              <AnimatePresence mode="wait">
+                {isMenuOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute inset-0 flex items-center justify-center"
+                  >
+                    <X className="h-5 w-5 text-white" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute inset-0 flex items-center justify-center"
+                  >
+                    <Menu className="h-5 w-5 text-white" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
           </div>
         </div>
 
-        {/* Mobile Menu - Enhanced */}
+        {/* Mobile Menu */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="lg:hidden bg-white border-t shadow-xl overflow-hidden"
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="md:hidden bg-gray-900 border-t border-white/10"
             >
-              <div className="h-1 bg-gradient-to-r from-purple-600 via-blue-500 to-green-500" />
-              
-              <div className="container mx-auto px-4 py-4">
-                <nav className="space-y-1">
-                  {navItems.map((item, index) => (
-                    <motion.div
-                      key={item.name}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      {item.dropdown ? (
-                        <div>
-                          <button
-                            onClick={() => setActiveDropdown(activeDropdown === item.name ? null : item.name)}
-                            className="flex items-center justify-between w-full py-3 text-gray-900 font-semibold"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <span style={{ color: item.color }}>{item.icon}</span>
-                              <span>{item.name}</span>
-                            </div>
-                            <ChevronDown className={`h-4 w-4 transition-transform ${
-                              activeDropdown === item.name ? "rotate-180" : ""
-                            }`} />
-                          </button>
-                          
-                          <AnimatePresence>
-                            {activeDropdown === item.name && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                exit={{ opacity: 0, height: 0 }}
-                                className="pl-8 space-y-2 mt-1"
-                              >
-                                {item.dropdown.map((service) => {
-                                  const Icon = service.icon
-                                  return (
-                                    <Link
-                                      key={service.name}
-                                      href={service.href}
-                                      className="flex items-center space-x-3 py-2 text-gray-600 hover:text-gray-900"
-                                      onClick={() => setIsMenuOpen(false)}
-                                    >
-                                      <div 
-                                        className="p-1.5 rounded"
-                                        style={{ backgroundColor: `${service.color}15`, color: service.color }}
-                                      >
-                                        <Icon className="h-3 w-3" />
-                                      </div>
-                                      <span className="text-sm">{service.name}</span>
-                                    </Link>
-                                  )
-                                })}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      ) : (
-                        <Link
-                          href={item.href}
-                          className="flex items-center space-x-3 py-3 text-gray-900 font-semibold"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          <span style={{ color: item.color }}>{item.icon}</span>
-                          <span>{item.name}</span>
-                        </Link>
-                      )}
-                    </motion.div>
-                  ))}
-                </nav>
+              <div className="container mx-auto px-4 py-6">
+                <div className="space-y-3">
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    <Link href="/print" className="block" onClick={() => setIsMenuOpen(false)}>
+                      <Button 
+                        variant="outline" 
+                        className="w-full border-2 border-purple-500/50 text-white hover:text-white bg-transparent hover:bg-purple-600/20 relative overflow-hidden group"
+                      >
+                        <Printer className="h-4 w-4 mr-2" />
+                        Print Only
+                      </Button>
+                    </Link>
+                  </motion.div>
 
-                {/* Mobile Action Buttons - Only Account button remaining */}
-                <div className="mt-6 pt-4 border-t border-gray-100">
-                  <Button variant="outline" className="w-full rounded-lg">
-                    <User className="h-4 w-4 mr-2" />
-                    Account
-                  </Button>
-                </div>
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <Link href="/design-and-print" className="block" onClick={() => setIsMenuOpen(false)}>
+                      <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0">
+                        <Palette className="h-4 w-4 mr-2" />
+                        Design + Print
+                      </Button>
+                    </Link>
+                  </motion.div>
 
-                {/* Quick Contact */}
-                <div className="mt-4 text-xs text-gray-500 flex items-center justify-center space-x-4">
-                  <a href="tel:+442071234567" className="flex items-center space-x-1">
-                    <Phone className="h-3 w-3" />
-                    <span>Call</span>
-                  </a>
-                  <a href="mailto:hello@arommedia.co.uk" className="flex items-center space-x-1">
-                    <Mail className="h-3 w-3" />
-                    <span>Email</span>
-                  </a>
-                  <span className="flex items-center space-x-1">
-                    <Clock className="h-3 w-3" />
-                    <span>24-48hr</span>
-                  </span>
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="pt-4 border-t border-white/10"
+                  >
+                    <div className="grid grid-cols-2 gap-3">
+                      <a href="tel:+442071234567" className="flex items-center gap-2 text-white/60 hover:text-white text-sm">
+                        <Phone className="h-4 w-4 text-purple-400" />
+                        <span>Call us</span>
+                      </a>
+                      <a href="mailto:hello@arommedia.co.uk" className="flex items-center gap-2 text-white/60 hover:text-white text-sm">
+                        <Mail className="h-4 w-4 text-purple-400" />
+                        <span>Email</span>
+                      </a>
+                    </div>
+                    <div className="flex items-center gap-2 mt-3 text-white/40 text-xs">
+                      <Clock className="h-3 w-3 text-purple-400" />
+                      <span>Mon-Fri: 9am - 6pm</span>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="flex justify-center mt-4"
+                  >
+                    <Badge variant="outline" className="border-purple-500/30 text-purple-400 bg-purple-500/10">
+                      <Zap className="h-3 w-3 mr-1 text-purple-400" />
+                      UK Based Printer
+                    </Badge>
+                  </motion.div>
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </header>
+
+        {/* Animated Progress Bar on Scroll */}
+        {isScrolled && (
+          <motion.div 
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 origin-left"
+          />
+        )}
+      </motion.header>
     </>
   )
 }

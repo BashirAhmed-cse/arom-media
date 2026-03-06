@@ -18,237 +18,162 @@ import {
   Palette,
   Printer,
   Send,
-  Heart
+  Heart,
+  Zap
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
+import { cn } from "@/lib/utils"
 
 export default function Footer() {
-  const colorPalette = {
-    primary: "#7C3AED",    // Vibrant Purple (Arom brand)
-    secondary: "#06D6A0",  // Mint Green
-    accent: "#FF6B6B",     // Coral Red
-    blue: "#118AB2",       // Ocean Blue
-    yellow: "#FFD166",     // Sunshine Yellow
-    indigo: "#4F46E5",     // Indigo
-  }
+  const currentYear = new Date().getFullYear()
 
   const footerLinks = {
     services: [
-      { name: "Graphic Design", href: "/services/design" },
-      { name: "Digital Printing", href: "/services/printing" },
-      { name: "Brand Identity", href: "/services/branding" },
-      { name: "Large Format Printing", href: "/services/large-format" },
-      { name: "Packaging Design", href: "/services/packaging" },
+      { name: "Business Cards", href: "/business-cards" },
+      { name: "Restaurant Menus", href: "/menus" },
+      { name: "Posters & Banners", href: "/posters" },
+      { name: "Flyers & Leaflets", href: "/flyers" },
+      { name: "Brochures", href: "/brochures" },
     ],
-    quickLinks: [
-      { name: "Upload & Print", href: "/upload" },
-      { name: "Design Studio", href: "/design-studio" },
+    company: [
+      { name: "About Us", href: "/about" },
       { name: "Portfolio", href: "/portfolio" },
-      { name: "Get Quote", href: "/quote" },
-      { name: "Track Order", href: "/track" },
+      { name: "Get a Quote", href: "/quote" },
+      { name: "Contact", href: "/contact" },
+      { name: "FAQs", href: "/faqs" },
     ],
     resources: [
       { name: "Design Templates", href: "/templates" },
       { name: "Printing Guide", href: "/guide" },
-      { name: "File Requirements", href: "/requirements" },
-      { name: "Colour Guide", href: "/colour-guide" },
+      { name: "File Setup", href: "/file-setup" },
+      { name: "Delivery Info", href: "/delivery" },
       { name: "Case Studies", href: "/case-studies" },
     ],
   }
 
   const socialLinks = [
-    { icon: <Facebook className="h-5 w-5" />, href: "#", label: "Facebook" },
-    { icon: <Instagram className="h-5 w-5" />, href: "#", label: "Instagram" },
-    { icon: <Twitter className="h-5 w-5" />, href: "#", label: "Twitter" },
-    { icon: <Linkedin className="h-5 w-5" />, href: "#", label: "LinkedIn" },
+    { icon: <Facebook className="h-4 w-4" />, href: "#", label: "Facebook", color: "hover:bg-blue-600" },
+    { icon: <Instagram className="h-4 w-4" />, href: "#", label: "Instagram", color: "hover:bg-pink-600" },
+    { icon: <Twitter className="h-4 w-4" />, href: "#", label: "Twitter", color: "hover:bg-sky-500" },
+    { icon: <Linkedin className="h-4 w-4" />, href: "#", label: "LinkedIn", color: "hover:bg-blue-700" },
   ]
 
-  const trustBadges = [
-    { icon: <Shield className="h-5 w-5" />, text: "Secure Payments" },
-    { icon: <Truck className="h-5 w-5" />, text: "UK Wide Delivery" },
-    { icon: <Clock className="h-5 w-5" />, text: "24/7 Support" },
+  const contactInfo = [
+    { icon: <Phone className="h-4 w-4" />, text: "077 37062865", href: "tel:+07737062865" },
+    { icon: <Mail className="h-4 w-4" />, text: "hello@arommedia.co.uk", href: "mailto:hello@arommedia.co.uk" },
+    { icon: <Clock className="h-4 w-4" />, text: "Mon-Fri: 9am - 6pm" },
+    { icon: <MapPin className="h-4 w-4" />, text: "London, UK" },
   ]
 
   return (
-    <footer className="relative overflow-hidden bg-gradient-to-b from-white to-gray-50/50 border-t">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{
-            backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute inset-0 opacity-5"
-          style={{
-            background: `linear-gradient(90deg, ${colorPalette.primary}, ${colorPalette.secondary}, ${colorPalette.accent})`,
-            backgroundSize: "300% 300%",
-          }}
-        />
-        {/* Decorative dots */}
-        {[...Array(20)].map((_, i) => (
+    <footer className="relative bg-gray-900 border-t border-white/10 overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(120,119,198,0.15),transparent_50%),radial-gradient(ellipse_at_bottom,rgba(255,51,102,0.1),transparent_50%)]" />
+        
+        {/* Floating Particles */}
+        {[...Array(10)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute rounded-full"
-            style={{
-              width: Math.random() * 4 + 1,
-              height: Math.random() * 4 + 1,
-              backgroundColor: [
-                colorPalette.primary,
-                colorPalette.secondary,
-                colorPalette.accent,
-                colorPalette.blue,
-              ][i % 4],
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
+            className="absolute w-0.5 h-0.5 bg-white/10 rounded-full"
+            initial={{
+              x: Math.random() * 100 + "%",
+              y: Math.random() * 100 + "%",
             }}
             animate={{
-              y: [0, -10, 0],
-              opacity: [0.2, 0.5, 0.2],
+              y: [null, "-30%"],
+              opacity: [0, 0.5, 0],
             }}
             transition={{
-              duration: Math.random() * 3 + 2,
+              duration: Math.random() * 10 + 10,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              ease: "linear",
             }}
           />
         ))}
       </div>
 
       <div className="relative z-10">
-        {/* Top CTA Section */}
-        <motion.div 
-          initial={{ y: 20, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          className="container mx-auto px-4 sm:px-6 py-12"
-        >
-          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-3xl p-8 sm:p-12 shadow-xl border border-purple-100">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-              <div className="text-center lg:text-left">
-                <div className="inline-flex items-center rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-1 text-sm text-white mb-4">
-                  <Sparkles className="h-3 w-3 mr-2" />
-                  LIMITED TIME OFFER
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-                  Ready to Bring Your Vision to Life?
-                </h3>
-                <p className="text-gray-600 max-w-2xl">
-                  Get 15% off your first order when you upload your design today!
-                </p>
-              </div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  href="/upload"
-                  className="inline-flex items-center justify-center rounded-full px-8 py-4 text-lg font-bold text-white shadow-xl hover:shadow-2xl transition-all"
-                  style={{
-                    background: `linear-gradient(135deg, ${colorPalette.primary}, ${colorPalette.indigo})`,
-                  }}
-                >
-                  Upload Design & Save 15%
-                  <ArrowRight className="ml-3 h-5 w-5" />
-                </Link>
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
-
         {/* Main Footer Content */}
-        <div className="container mx-auto px-4 sm:px-6 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
-            {/* Brand Column */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="flex items-center space-x-3">
+        <div className="container mx-auto px-4 py-12 lg:py-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
+            {/* Brand Column - 3 cols */}
+            <div className="lg:col-span-3 space-y-6">
+              {/* Logo */}
+              <Link href="/" className="flex items-center gap-3 group">
                 <motion.div 
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.5 }}
-                  className="relative h-14 w-14 rounded-xl shadow-lg overflow-hidden"
-                  style={{
-                    background: `linear-gradient(135deg, ${colorPalette.primary}, ${colorPalette.indigo})`,
-                  }}
+                  whileHover={{ rotate: 5, scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative h-12 w-12"
                 >
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex items-center space-x-1">
-                      <Palette className="h-6 w-6 text-white" />
-                      <Printer className="h-5 w-5 text-white/90" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 rounded-xl opacity-80 group-hover:opacity-100 blur-md group-hover:blur-lg transition-all" />
+                  <div className="relative h-full w-full bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 rounded-xl flex items-center justify-center">
+                    <div className="relative flex gap-1">
+                      <Printer className="h-5 w-5 text-white" />
+                      <Palette className="h-5 w-5 text-white" />
                     </div>
                   </div>
                 </motion.div>
                 <div>
-                  <h2 className="text-2xl font-black bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                    Arom<span className="text-purple-600">Media</span>
-                  </h2>
-                  <p className="text-sm text-gray-500 font-medium">UK Design & Print Excellence</p>
+                  <span className="text-2xl font-black text-white">AROM</span>
+                  <span className="text-2xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent ml-1">MEDIA</span>
                 </div>
-              </div>
-              
-              <p className="text-gray-600">
-                Transforming ideas into stunning printed materials across the UK since 2015. 
-                Professional design services and premium printing solutions.
+              </Link>
+
+              <p className="text-white/40 text-sm leading-relaxed">
+                UK-based design and print specialists, bringing your creative visions to life with uncompromising quality since 2010.
               </p>
 
               {/* Trust Badges */}
-              <div className="space-y-3">
-                {trustBadges.map((badge, index) => (
-                  <motion.div
-                    key={badge.text}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    className="flex items-center space-x-3"
-                  >
-                    <div 
-                      className="p-2 rounded-lg"
-                      style={{ backgroundColor: `${colorPalette.primary}15` }}
-                    >
-                      {badge.icon}
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">{badge.text}</span>
-                  </motion.div>
-                ))}
+              <div className="flex items-center gap-4 pt-2">
+                <Badge variant="outline" className="border-white/10 text-white/60 bg-white/5">
+                  <Shield className="h-3 w-3 mr-1 text-purple-400" />
+                  Secure
+                </Badge>
+                <Badge variant="outline" className="border-white/10 text-white/60 bg-white/5">
+                  <Truck className="h-3 w-3 mr-1 text-purple-400" />
+                  Free Delivery*
+                </Badge>
+                <Badge variant="outline" className="border-white/10 text-white/60 bg-white/5">
+                  <Clock className="h-3 w-3 mr-1 text-purple-400" />
+                  24/48hr
+                </Badge>
               </div>
 
               {/* Social Links */}
-              <div className="pt-4">
-                <h4 className="text-sm font-semibold text-gray-900 mb-3">Follow Our Creativity</h4>
-                <div className="flex space-x-3">
-                  {socialLinks.map((social, index) => (
-                    <motion.a
-                      key={social.label}
-                      href={social.href}
-                      aria-label={social.label}
-                      whileHover={{ y: -3, scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.1 }}
-                      viewport={{ once: true }}
-                      className="p-2.5 rounded-full hover:shadow-lg transition-all duration-300"
-                      style={{ backgroundColor: `${colorPalette.primary}10` }}
-                    >
-                      {social.icon}
-                    </motion.a>
-                  ))}
-                </div>
+              <div className="flex items-center gap-2 pt-4">
+                {socialLinks.map((social, index) => (
+                  <motion.a
+                    key={social.label}
+                    href={social.href}
+                    aria-label={social.label}
+                    whileHover={{ y: -2, scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    viewport={{ once: true }}
+                    className={cn(
+                      "p-2 rounded-lg bg-white/5 border border-white/10 text-white/60 hover:text-white transition-all duration-300",
+                      social.color
+                    )}
+                  >
+                    {social.icon}
+                  </motion.a>
+                ))}
               </div>
             </div>
 
-            {/* Links Columns */}
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                <span className="w-2 h-6 rounded-full mr-2" style={{ backgroundColor: colorPalette.primary }} />
+            {/* Services Links - 3 cols */}
+            <div className="lg:col-span-3">
+              <h3 className="text-white font-semibold mb-4 flex items-center">
+                <span className="w-1 h-4 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full mr-2" />
                 Our Services
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {footerLinks.services.map((link, index) => (
                   <motion.li
                     key={link.name}
@@ -259,23 +184,24 @@ export default function Footer() {
                   >
                     <Link
                       href={link.href}
-                      className="flex items-center text-gray-600 hover:text-purple-600 transition-colors group"
+                      className="text-white/40 hover:text-white transition-colors text-sm flex items-center group"
                     >
-                      <ArrowRight className="h-3 w-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <span>{link.name}</span>
+                      <ArrowRight className="h-3 w-3 mr-2 text-purple-500 opacity-0 group-hover:opacity-100 transition-all" />
+                      {link.name}
                     </Link>
                   </motion.li>
                 ))}
               </ul>
             </div>
 
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                <span className="w-2 h-6 rounded-full mr-2" style={{ backgroundColor: colorPalette.secondary }} />
-                Quick Links
+            {/* Company Links - 3 cols */}
+            <div className="lg:col-span-3">
+              <h3 className="text-white font-semibold mb-4 flex items-center">
+                <span className="w-1 h-4 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full mr-2" />
+                Company
               </h3>
-              <ul className="space-y-3">
-                {footerLinks.quickLinks.map((link, index) => (
+              <ul className="space-y-2">
+                {footerLinks.company.map((link, index) => (
                   <motion.li
                     key={link.name}
                     initial={{ opacity: 0, x: -10 }}
@@ -285,22 +211,23 @@ export default function Footer() {
                   >
                     <Link
                       href={link.href}
-                      className="flex items-center text-gray-600 hover:text-green-600 transition-colors group"
+                      className="text-white/40 hover:text-white transition-colors text-sm flex items-center group"
                     >
-                      <ArrowRight className="h-3 w-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <span>{link.name}</span>
+                      <ArrowRight className="h-3 w-3 mr-2 text-purple-500 opacity-0 group-hover:opacity-100 transition-all" />
+                      {link.name}
                     </Link>
                   </motion.li>
                 ))}
               </ul>
             </div>
 
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                <span className="w-2 h-6 rounded-full mr-2" style={{ backgroundColor: colorPalette.blue }} />
+            {/* Resources Links - 3 cols */}
+            <div className="lg:col-span-3">
+              <h3 className="text-white font-semibold mb-4 flex items-center">
+                <span className="w-1 h-4 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full mr-2" />
                 Resources
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {footerLinks.resources.map((link, index) => (
                   <motion.li
                     key={link.name}
@@ -311,10 +238,10 @@ export default function Footer() {
                   >
                     <Link
                       href={link.href}
-                      className="flex items-center text-gray-600 hover:text-blue-600 transition-colors group"
+                      className="text-white/40 hover:text-white transition-colors text-sm flex items-center group"
                     >
-                      <ArrowRight className="h-3 w-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <span>{link.name}</span>
+                      <ArrowRight className="h-3 w-3 mr-2 text-purple-500 opacity-0 group-hover:opacity-100 transition-all" />
+                      {link.name}
                     </Link>
                   </motion.li>
                 ))}
@@ -324,130 +251,97 @@ export default function Footer() {
 
           {/* Newsletter Section */}
           <motion.div 
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-12 pt-8 border-t border-gray-200"
+            className="mt-12 pt-8 border-t border-white/10"
           >
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Stay Inspired</h3>
-                <p className="text-gray-600">Get design tips and exclusive offers in our newsletter</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-500/10 rounded-lg">
+                  <Send className="h-5 w-5 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold">Stay Updated</h3>
+                  <p className="text-white/40 text-sm">Get design tips and exclusive offers</p>
+                </div>
               </div>
-              <div className="flex w-full max-w-md gap-3">
+              <div className="flex w-full max-w-md gap-2">
                 <Input
                   type="email"
                   placeholder="Your email address"
-                  className="flex-1 rounded-full border-gray-300 focus:border-purple-500"
+                  className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-white/30 rounded-lg focus:border-purple-500 focus:ring-purple-500/20"
                 />
                 <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <Button 
-                    className="rounded-full px-6 font-semibold"
-                    style={{
-                      background: `linear-gradient(135deg, ${colorPalette.primary}, ${colorPalette.indigo})`,
-                    }}
-                  >
-                    <Send className="h-4 w-4 mr-2" />
+                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0 px-6">
                     Subscribe
+                    <Send className="h-4 w-4 ml-2" />
                   </Button>
                 </motion.div>
               </div>
             </div>
           </motion.div>
 
-          {/* Contact Info */}
-          <div className="mt-8 pt-8 border-t border-gray-200">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  icon: <Phone className="h-5 w-5" />,
-                  title: "Call Us",
-                  info: "+44 (0)20 7123 4567",
-                  subtitle: "Mon-Fri 9am-6pm",
-                  color: colorPalette.primary,
-                },
-                {
-                  icon: <Mail className="h-5 w-5" />,
-                  title: "Email Us",
-                  info: "hello@arommedia.co.uk",
-                  subtitle: "Response within 2 hours",
-                  color: colorPalette.secondary,
-                },
-                {
-                  icon: <MapPin className="h-5 w-5" />,
-                  title: "Visit Us",
-                  info: "London, United Kingdom",
-                  subtitle: "By appointment only",
-                  color: colorPalette.blue,
-                },
-              ].map((contact, index) => (
-                <motion.div
-                  key={contact.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex items-start space-x-4 p-4 rounded-xl hover:shadow-md transition-all duration-300"
-                  style={{ backgroundColor: `${contact.color}08` }}
-                >
-                  <div 
-                    className="p-3 rounded-lg"
-                    style={{ backgroundColor: `${contact.color}15` }}
-                  >
-                    {contact.icon}
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{contact.title}</h4>
-                    <p className="text-lg font-bold mt-1" style={{ color: contact.color }}>
-                      {contact.info}
-                    </p>
-                    <p className="text-sm text-gray-500 mt-1">{contact.subtitle}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+          {/* Contact Info Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            {contactInfo.map((item, index) => (
+              <motion.div
+                key={item.text}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                viewport={{ once: true }}
+                className="flex items-center gap-2 text-white/40 hover:text-white/60 transition-colors"
+              >
+                {item.href ? (
+                  <a href={item.href} className="flex items-center gap-2">
+                    <span className="text-purple-400">{item.icon}</span>
+                    <span className="text-xs sm:text-sm">{item.text}</span>
+                  </a>
+                ) : (
+                  <>
+                    <span className="text-purple-400">{item.icon}</span>
+                    <span className="text-xs sm:text-sm">{item.text}</span>
+                  </>
+                )}
+              </motion.div>
+            ))}
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div 
-          className="border-t py-6"
-          style={{ borderColor: `${colorPalette.primary}20` }}
-        >
-          <div className="container mx-auto px-4 sm:px-6">
-            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div className="border-t border-white/10 py-6">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="text-center md:text-left">
-                <p className="text-sm text-gray-600">
-                  © {new Date().getFullYear()} Arom Media Ltd. All rights reserved.
+                <p className="text-sm text-white/40">
+                  © {currentYear} Arom Media Ltd. All rights reserved.
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  Registered in England No: 12345678 • VAT No: GB 123 4567 89
+                <p className="text-xs text-white/20 mt-1">
+                  Registered in England • VAT: GB 123 4567 89
                 </p>
               </div>
               
-              <div className="flex items-center space-x-6 text-sm">
-                <Link 
-                  href="/privacy" 
-                  className="text-gray-600 hover:text-purple-600 transition-colors"
-                >
-                  Privacy Policy
+              <div className="flex items-center gap-6 text-xs">
+                <Link href="/privacy" className="text-white/40 hover:text-white transition-colors">
+                  Privacy
                 </Link>
-                <Link 
-                  href="/terms" 
-                  className="text-gray-600 hover:text-purple-600 transition-colors"
-                >
-                  Terms of Service
+                <Link href="/terms" className="text-white/40 hover:text-white transition-colors">
+                  Terms
                 </Link>
-                <Link 
-                  href="/cookies" 
-                  className="text-gray-600 hover:text-purple-600 transition-colors"
-                >
-                  Cookie Policy
+                <Link href="/cookies" className="text-white/40 hover:text-white transition-colors">
+                  Cookies
                 </Link>
               </div>
+
+              {/* UK Badge */}
+              <Badge variant="outline" className="border-purple-500/30 text-purple-400 bg-purple-500/10">
+                <Zap className="h-3 w-3 mr-1" />
+                UK Based
+              </Badge>
             </div>
 
             {/* Made with love */}
@@ -455,11 +349,10 @@ export default function Footer() {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              className="text-center mt-4 pt-4 border-t"
-              style={{ borderColor: `${colorPalette.primary}10` }}
+              className="text-center mt-6 pt-4 border-t border-white/5"
             >
-              <p className="text-sm text-gray-500 flex items-center justify-center">
-                Made with <Heart className="h-4 w-4 mx-1 text-red-500" /> in the UK • Proudly serving businesses nationwide
+              <p className="text-xs text-white/20 flex items-center justify-center">
+                Made with <Heart className="h-3 w-3 mx-1 text-pink-500" /> in London
               </p>
             </motion.div>
           </div>
